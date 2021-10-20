@@ -7,5 +7,8 @@ clearphotos:
 manual: manual.py
 	python3 manual.py
 
-test: motorTest.py
+motorTest: motorTest.py
 	python3 motorTest.py
+
+cameraTest: cameraTest.py
+	python3 cameraTest.py
