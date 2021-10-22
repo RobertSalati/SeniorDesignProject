@@ -3,10 +3,10 @@ from adafruit_motor import stepper;
 import board;
 import time;
 
-kit = MotorKit(i2c=board.I2C());   
+kit = MotorKit(address=0x6f);   
 
-for i in range(10):
+for i in range(1000):
 
-    kit.stepper1.onestep();
-    time.sleep(0.5);
+    kit.stepper2.onestep();
+    time.sleep(0.01);
 

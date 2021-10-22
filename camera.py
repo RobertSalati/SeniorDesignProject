@@ -1,12 +1,19 @@
 from picamera import PiCamera;
 import numpy as np;
 import time as time;
+from datetime import datetime;
 #import opencv as cv;
 
 camera = PiCamera();
 
-def takePicture(num):
+def takePicture(numShelf, numPlant):
     camera.start_preview();
-    sleep(3);
-    title = "plant " + str(num) ", "
+    time.sleep(5);
+
+    now = datetime.now();
+    directory = "/home/pi/SeniorDesignProject/images/";
+    name = "shelf " + str(numShelf) + " plant " + str(numPlant) + now.strftime(" %m-%d-%Y %H:%M:%S") + ".jpg";
+    title = str(directory+name)
+    print(title);
     camera.capture(title);
+    camera.stop_preview();

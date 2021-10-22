@@ -1,1 +1,3 @@
-from camera import *
+from camera import *;
+
+takePicture(3,1);
