@@ -1,3 +1,5 @@
 from camera import *;
 
-takePicture(3,1);
+numShelf = int(input("Shelf number: "));
+numPlant = int(input("Plant number: "));
+takePicture(numShelf,numPlant);
