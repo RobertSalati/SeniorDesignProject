@@ -56,4 +56,5 @@ def calcLength(x, y):
 
     L4 = np.sqrt((l+x)**2+(w-y)**2+h**2);
 
-    return L1, L2, L3, L4;
+    lengths = np.array([L1, L2, L3, L4]);
+    return lengths;
