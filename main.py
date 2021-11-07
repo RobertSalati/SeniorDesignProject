@@ -7,7 +7,7 @@ import time as time
 
 # Global Constants
 r = 2       # spool radius [cm];
-stepAngle = 360/2048;   # angle per step;
+stepAngle = 360/200;   # angle per step;
 
 # array of plants probably not needed
 
@@ -34,22 +34,24 @@ def main():
     while (True):
         for i in plants:
             xpos, ypos = locs[i][0], locs[i][1];
-            print(xpos, ypos);
+            print("xpos: ", xpos, "ypos: ", ypos);
             lengthsNew = calcLength(xpos, ypos);
             lengthsDiff = lengthsNew-lengths;
             steps = lengthsDiff/(r*stepAngle);
             steps = steps.astype('int');
-            print(steps)
-            for i in range(2):
-                if lengthsDiff[i]<=0:
-                    moveMotor(abs(steps[i]), i+1, direc=1);
-            for i in range(2):
-                if lengthsDiff[i]>0:
-                    moveMotor(abs(steps[i]), i+1, direc=0);
+            for j in range(4):
+                if lengthsDiff[j]<=0:
+                    moveMotor(abs(steps[j]), j+1, direc=1);
+            for h in range(4):
+                if lengthsDiff[h]>0:
+                    moveMotor(abs(steps[h]), h+1, direc=0);
             time.sleep(5);
             lengths = lengthsNew;
+            print(i);
+            #takePicture(1,i+1);
+
             
-        break;
+        time.sleep(20);
 
     # input all positions into this array
 

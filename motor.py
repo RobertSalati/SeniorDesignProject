@@ -7,8 +7,8 @@ l = 3;      # length of the shelf (x axis) [m]
 w = 1;      # width of the shelf (y axis)[m]
 h = 0.1;    # camera sag [m]
 
-kit1 = MotorKit(address=0x6f);
-kit2 = MotorKit(address=0x6f);
+kit1 = MotorKit(address=0x60);
+kit2 = MotorKit(address=0x61);
 
 def moveMotor(steps, num, direc):
     if num == 1:            # Motor 1

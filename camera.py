@@ -2,7 +2,7 @@ from picamera import PiCamera;
 import numpy as np;
 import time as time;
 from datetime import datetime;
-#import opencv as cv;
+import cv2 as cv;
 
 camera = PiCamera();
 
@@ -17,3 +17,4 @@ def takePicture(numShelf, numPlant):
     print(title);
     camera.capture(title);
     camera.stop_preview();
+    return title;
