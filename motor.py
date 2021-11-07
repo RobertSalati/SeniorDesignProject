@@ -1,6 +1,6 @@
 import picamera as cam;
 import numpy as np;
-from adafruit_motorkit import MotorKit;
+from adafruit_motorkit import motorkit;
 from adafruit_motor import stepper;
 
 l = 3;      # length of the shelf (x axis) [m]
