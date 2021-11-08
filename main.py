@@ -48,7 +48,7 @@ def main():
             time.sleep(5);
             lengths = lengthsNew;
             print(i);
-            #takePicture(1,i+1);
+            takePicture(1,i+1, False);
 
             
         time.sleep(20);
