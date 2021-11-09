@@ -6,10 +6,13 @@ import time as time
 #from camera import *
 
 # Global Constants
-r = 2       # spool radius [cm];
+r = 0.02;       # spool radius [m];
 stepAngle = 360/200;   # angle per step;
+l=0.28;
+w=0.43;
+h=0.03;
 
-motors = np.array([Motor(0,1,1), Motor(1,-1,1), Motor(2,1,-1), Motor(3,-1,-1)])
+motors = np.array([Motor(0,w,0,23), Motor(1,w,l,24), Motor(2,0,0,23), Motor(3,0,l,23.5)])
 
 # array of plants probably not needed
 
@@ -36,21 +39,22 @@ def main():
             xpos, ypos = locs[i][0], locs[i][1];
             print("xpos: ", xpos, "ypos: ", ypos);
 
-            lengthsOld = np.array([motors[0].length, motors[0].length, motors[0].length, motors[0].length])
+            lengths = np.array([motors[0].length, motors[0].length, motors[0].length, motors[0].length]);
             for motor in motors:
-                motor.changeLength(xpos,ypos)
+                motor.changeLength(xpos,ypos);
+
+            lengths = np.array([motors[0].length, motors[0].length, motors[0].length, motors[0].length]);
+            lengthsNew = np.array([motors[0].lengthNew, motors[0].lengthNew, motors[0].lengthNew, motors[0].lengthNew]);
             lengthsDiff = lengthsNew-lengths;
-            steps = lengthsDiff/(r*stepAngle);
-            steps = steps.astype('int');
-            for j in range(4):
-                if lengthsDiff[j]<=0:
-                    moveMotor(abs(steps[j]), j+1, direc=1);
-            for h in range(4):
-                if lengthsDiff[h]>0:
-                    moveMotor(abs(steps[h]), h+1, direc=0);
+            for i in range(len(motors)):
+                if (lengthsNew[i]<lengths[i]):
+                    motors[i].moveMotor(lengthsDiff[i]/(r*stepAngle),0);
+
+            for i in range(len(motors)):
+                if (lengthsNew[i]>lengths[i]):
+                    motors[i].moveMotor(lengthsDiff[i]/(r*stepAngle),1);
+
             time.sleep(5);
-            lengths = lengthsNew;
-            print(i);
             #takePicture(numShelf=1,numPlant=i+1, calibrate=False);
 
             
@@ -63,7 +67,6 @@ def main():
     # Inside the for loop, first call the function to calculate the string length for each position
     # Then call the function to move the motors. This function will need to calculate the easiest way 
     # to move the motors which requires the least amount of tension
-    print("main()");
 
     return 0;
 
