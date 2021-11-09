@@ -9,10 +9,7 @@ h = 0.1;    # camera sag [m]
 
 global lengths;
 
-lengths = np.array([NULL, NULL, NULL, NULL]);
-
-class Motor:
-    length = NULL;
+lengths = np.array([0, 0, 0, 0]);
 
 kit1 = MotorKit(address=0x60);
 kit2 = MotorKit(address=0x61);
