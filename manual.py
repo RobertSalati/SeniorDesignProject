@@ -1,65 +1,31 @@
 import numpy as np;
-global lengths;
-
-lengths = np.array([0, 0, 0, 0])
+#from adafruit_motorkit import motorkit;
+#from adafruit_motor import stepper;
+from adafruit_motorkit import MotorKit;
+from adafruit_motor import stepper;
 
 kit1 = MotorKit(address=0x60);
-kit2 = MotorKit(address=0x61);
+#kit2 = MotorKit(address=0x61);
+motorAddresses = [kit1.stepper1, kit1.stepper2];
 
 class Motor:
     length = 0;
 
-    def __init__(self,num):
+    def __init__(self,num, xpos, ypos):
         self.num = num;
+        self.xpos = xpos;
+        self.ypos = ypos;
 
-    def moveMotor(steps, motorNum, dir):
 
-    if motorNum == 1:            # Motor 1
-        if dir == 0:
-            for i in range(steps):
-                kit1.stepper1.onestep(direction=stepper.FORWARD);
-        if dir == 1:
-            for i in range(steps):
-                kit1.stepper1.onestep(direction=stepper.BACKWARD);
-     
-    if motorNum == 2:           # Motor 2
-        if dir == 0:
-            for i in range(steps):
-                kit1.stepper2.onestep(direction=stepper.FORWARD);
-        if dir == 1:
-            for i in range(steps):
-                kit1.stepper2.onestep(direction=stepper.BACKWARD);
+    def moveMotor(self, steps, dir):
+
+        if (dir == 0):
+            dir = stepper.FORWARD;
+        elif (dir == 1):
+            dir = stepper.BACKWARD
+        for i in range(steps):
+            motorAddresses[self.num].onestep(direction=dir);
     
-    if motorNum == 3:            # Motor 3
-        if dir == 0:
-            for i in range(steps):
-                kit2.stepper1.onestep(direction=stepper.FORWARD);
-        if dir == 1:
-            for i in range(steps):
-                kit2.stepper1.onestep(direction=stepper.BACKWARD);
-    
-    if motorNum == 4:            # Motor 4
-        if dir == 0:
-            for i in range(steps):
-                kit2.stepper2.onestep(direction=stepper.FORWARD);
-        if dir == 1:
-            for i in range(steps):
-                kit2.stepper2.onestep(direction=stepper.BACKWARD);
-
-    #def moveMotor(steps, dir):
-    #    if (num == 1 or num == 2):
-    #        if dir == 0:
-    #            for i in range(steps):
-    #                kit1.stepper1.onestep(direction=stepper.FORWARD);
-    #        if dir == 1:
-    #            for i in range(steps):
-    #                kit1.stepper1.onestep(direction=stepper.BACKWARD);
-    #    elif (num == 3 or num == 4):
-    #                    if dir == 0:
-    #            for i in range(steps):
-    #                kit1.stepper1.onestep(direction=stepper.FORWARD);
-    #        if dir == 1:
-    #            for i in range(steps):
-    #                kit1.stepper1.onestep(direction=stepper.BACKWARD);
-
+    def changeLength(self,x,y):
+        self.length = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2);
 

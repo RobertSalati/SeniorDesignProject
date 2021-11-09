@@ -8,6 +8,10 @@ import time as time
 # Global Constants
 r = 2       # spool radius [cm];
 stepAngle = 360/200;   # angle per step;
+motor1 = Motor(0); motor2 = Motor(1); motor3 = Motor(2); motor4 = Motor[3];
+motors = np.array([motor1, motor2, motor3, motor4]);
+print(motors.length)
+
 
 # array of plants probably not needed
 
@@ -47,7 +51,7 @@ def main():
             time.sleep(5);
             lengths = lengthsNew;
             print(i);
-            takePicture(numShelf=1,numPlant=i+1, calibrate=False);
+            #takePicture(numShelf=1,numPlant=i+1, calibrate=False);
 
             
         time.sleep(20);
