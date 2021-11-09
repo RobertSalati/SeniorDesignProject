@@ -6,18 +6,19 @@ import time as time
 #from camera import *
 
 # Global Constants
-r = 0.02;       # spool radius [m];
-stepAngle = 360/200;   # angle per step;
+r = 0.01;       # spool radius [m];
+stepAngle = 360/200*np.pi/180;   # angle per step;
 l=0.28;
 w=0.43;
-h=0.03;
+h=0.025;
 
-motors = np.array([Motor(0,w,0,23), Motor(1,w,l,24), Motor(2,0,0,23), Motor(3,0,l,23.5)])
+motors = np.array([Motor(0,w,0,26), Motor(1,0,0,15), Motor(2,0,0,23), Motor(3,0,l,23.5)]);
+motors = motors[0:2];
 
 # array of plants probably not needed
 
 locs = np.genfromtxt("plantLocs.txt", skip_header=2)[:,2:4];
-locs = locs.astype('int');
+locs = locs.astype('float');
 print(locs[0,0]);
 
 plants = [];
@@ -32,7 +33,7 @@ def main():
 
         else: 
             plants.append(int(plantNum)-1);
-
+    time.sleep(3);
     # Loop that actually moves the camera
     while (True):
         for i in plants:
@@ -45,14 +46,17 @@ def main():
 
             lengths = np.array([motors[0].length, motors[0].length, motors[0].length, motors[0].length]);
             lengthsNew = np.array([motors[0].lengthNew, motors[0].lengthNew, motors[0].lengthNew, motors[0].lengthNew]);
-            lengthsDiff = lengthsNew-lengths;
-            for i in range(len(motors)):
-                if (lengthsNew[i]<lengths[i]):
-                    motors[i].moveMotor(lengthsDiff[i]/(r*stepAngle),0);
+            lengthsDiff = lengthsNew-lengths
+            print(lengthsDiff);
+            for motor in motors:
+                if (motor.priority == 1):
+                    print((motor.lengthNew-motor.length)/(r*stepAngle));
+                    motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),0);
 
-            for i in range(len(motors)):
-                if (lengthsNew[i]>lengths[i]):
-                    motors[i].moveMotor(lengthsDiff[i]/(r*stepAngle),1);
+            for motor in motors:
+                if (motor.priority == 0):
+                    print((motor.lengthNew-motor.length)/(r*stepAngle));
+                    motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),1);
 
             time.sleep(5);
             #takePicture(numShelf=1,numPlant=i+1, calibrate=False);
