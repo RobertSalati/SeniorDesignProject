@@ -10,18 +10,22 @@ import numpy as np
 
 # 360 = 2048
 
-
-motors = np.array([Motor(0,1,1), Motor(1,-1,1), Motor(2,-1,-1), Motor(3,1,-1)]) 
+motors = np.array([Motor(0,0,0,0), Motor(1,0,0,0), Motor(2,0,0,0), Motor(3,0,0,0)]);
 
 while True:
-    angle = int(input("Move angle: "));
-    num = int(input("Motor number: "));
-    steps = abs(int(angle/360 * 200));
+    angle = int(input("Move angle: "))*np.pi/180;
+    num1 = int(input("Motor number: "));
+    num2 = int(input("Motor number: "));
+    stepAngle = 2*np.pi/400;
+    steps = abs(angle/stepAngle);
+    print(steps);
     if angle <= 0:
         direction = 1;
     else:
-        direction = 0;
-
-    motors[num-1].moveMotor(steps, direction);
+        direction = -1;
+    time.sleep(2);
+    for i in range(int(steps)):
+        motors[num1-1].moveMotor(1, direction);
+        motors[num2-1].moveMotor(1, direction*-1)
     
 

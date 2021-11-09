@@ -97,6 +97,7 @@ def calibrate(xpos, ypos):
 
     # Now for actually moving the camera
 
+    
     if (center[0] < width/2-100 or center[0] > width/2+100 or center[1] < height/2-100 or center[1] > height/2+100):
         print("yes");
     

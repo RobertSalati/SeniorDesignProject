@@ -10,9 +10,9 @@ r = 0.01;       # spool radius [m];
 stepAngle = 360/200*np.pi/180;   # angle per step;
 l=0.28;
 w=0.43;
-h=0.025;
+h=0.035;
 
-motors = np.array([Motor(0,w,0,26), Motor(1,0,0,15), Motor(2,0,0,23), Motor(3,0,l,23.5)]);
+motors = np.array([Motor(0,w/2,0,0.245), Motor(1,-w/2,0,0.15), Motor(2,0,0,0.23), Motor(3,0,l,0.235)]);
 motors = motors[0:2];
 
 # array of plants probably not needed
@@ -40,14 +40,13 @@ def main():
             xpos, ypos = locs[i][0], locs[i][1];
             print("xpos: ", xpos, "ypos: ", ypos);
 
-            lengths = np.array([motors[0].length, motors[0].length, motors[0].length, motors[0].length]);
             for motor in motors:
                 motor.changeLength(xpos,ypos);
 
             lengths = np.array([motors[0].length, motors[0].length, motors[0].length, motors[0].length]);
             lengthsNew = np.array([motors[0].lengthNew, motors[0].lengthNew, motors[0].lengthNew, motors[0].lengthNew]);
             lengthsDiff = lengthsNew-lengths
-            print(lengthsDiff);
+            print(lengths);
             for motor in motors:
                 if (motor.priority == 1):
                     print((motor.lengthNew-motor.length)/(r*stepAngle));

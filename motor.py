@@ -13,7 +13,15 @@ kit1 = MotorKit(address=0x60);
 motorAddresses = [kit1.stepper1, kit1.stepper2];
 
 class Motor:
-    def __init__(self,num, xpos, ypos,length):
+    def __init__(self):
+        self.num = 0;
+        self.xpos = 0;
+        self.ypos = 0;
+        self.length = length;
+        self.lengthNew = length;
+        self.priority = 1;
+
+    def __init__(self,num, xpos, ypos, length):
         self.num = num;
         self.xpos = xpos;
         self.ypos = ypos;
@@ -24,13 +32,12 @@ class Motor:
 
     def moveMotor(self, steps, dir):
 
-        if (dir == 0):
+        if (dir == 1):
             dir = stepper.FORWARD;
-        elif (dir == 1):
+        elif (dir == -1):
             dir = stepper.BACKWARD
         for i in range(int(steps)):
-            motorAddresses[self.num].onestep(direction=dir);
-            time.sleep(0.005);
+            motorAddresses[self.num].onestep(direction=dir,style = stepper.INTERLEAVE);
     
     def changeLength(self,x,y):
         self.length = self.lengthNew;
