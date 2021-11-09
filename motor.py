@@ -8,8 +8,8 @@ w = 1;      # width of the shelf (y axis)[m]
 h = 0.1;    # camera sag [m]
 
 kit1 = MotorKit(address=0x60);
-#kit2 = MotorKit(address=0x61);
-motorAddresses = [kit1.stepper1, kit1.stepper2];
+kit2 = MotorKit(address=0x61);
+motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
 
 class Motor:
     length = 0;

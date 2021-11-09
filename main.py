@@ -8,10 +8,8 @@ import time as time
 # Global Constants
 r = 2       # spool radius [cm];
 stepAngle = 360/200;   # angle per step;
-motor1 = Motor(0); motor2 = Motor(1); motor3 = Motor(2); motor4 = Motor[3];
-motors = np.array([motor1, motor2, motor3, motor4]);
-print(motors.length)
 
+motors = np.array([Motor(0,1,1), Motor(1,-1,1), Motor(2,1,-1), Motor(3,-1,-1)])
 
 # array of plants probably not needed
 
@@ -22,7 +20,6 @@ print(locs[0,0]);
 plants = [];
 
 def main():
-    lengths = np.array([0, 1, 1, 2]);
     # Initial loop to find what plants will be worked with.
     while (True):
         plantNum = input("Plant number: ");
@@ -38,7 +35,10 @@ def main():
         for i in plants:
             xpos, ypos = locs[i][0], locs[i][1];
             print("xpos: ", xpos, "ypos: ", ypos);
-            lengthsNew = calcLength(xpos, ypos);
+
+            lengthsOld = np.array([motors[0].length, motors[0].length, motors[0].length, motors[0].length])
+            for motor in motors:
+                motor.changeLength(xpos,ypos)
             lengthsDiff = lengthsNew-lengths;
             steps = lengthsDiff/(r*stepAngle);
             steps = steps.astype('int');
