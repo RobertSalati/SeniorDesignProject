@@ -15,21 +15,20 @@ locs = np.genfromtxt("plantLocs.txt", skip_header=2)[:,2:4];
 locs = locs.astype('int');
 print(locs[0,0]);
 
-
 plants = [];
-
-print("main.py");
-
 
 def main():
     lengths = np.array([0, 1, 1, 2]);
     # Initial loop to find what plants will be worked with.
     while (True):
         plantNum = input("Plant number: ");
+
         if (plantNum == "done" or plantNum == "Done"):
             break;
+
         else: 
             plants.append(int(plantNum)-1);
+
     # Loop that actually moves the camera
     while (True):
         for i in plants:
@@ -48,7 +47,7 @@ def main():
             time.sleep(5);
             lengths = lengthsNew;
             print(i);
-            takePicture(1,i+1, False);
+            takePicture(numShelf=1,numPlant=i+1, calibrate=False);
 
             
         time.sleep(20);

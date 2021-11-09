@@ -4,6 +4,7 @@ import time as time;
 from datetime import datetime;
 import cv2 as cv;
 import matplotlib.pyplot as plt;
+#from motor import *;
 
 # Global variables
 #camera = PiCamera();
@@ -26,7 +27,7 @@ def takePicture(numShelf, numPlant, calibrate):
         directory = "/home/pi/SeniorDesignProject/";
         name = "calibrate.jpg";
 
-    elif (calibrate == False):  # Creates file name for storage
+    else:  # Creates file name for storage
         now = datetime.now();
         directory = "/home/pi/SeniorDesignProject/images/";
         name = "shelf " + str(numShelf) + " plant " + str(numPlant) + now.strftime(" %m-%d-%Y %H:%M:%S") + ".jpg";
@@ -37,7 +38,7 @@ def takePicture(numShelf, numPlant, calibrate):
 
     return title;
 
-def calibrate():
+def calibrate(xpos, ypos):
     """Calibrates the camera with a vision based feedback loop
     Args:
         None.
@@ -45,12 +46,15 @@ def calibrate():
         None.
     """
 
+
+
     title = "calibration.jpg";
-    #title = takePicture(0,0,True);  # Takes calibration picture
+    #title = takePicture(numShelf=0,numPlant=0,calibrate=True);  # Takes calibration picture
     
     img = cv.imread(title);     # Creates numpy array of the image
 
-    img = img[10:len(img)-10,10:len(img[0])-10]
+    width = int(img.shape[1])    # Size of the image
+    height = int(img.shape[0])
 
     img_gs = cv.cvtColor(img, cv.COLOR_BGR2GRAY);       # Converts image to grayscale
 
@@ -62,36 +66,62 @@ def calibrate():
 
     img_edges = cv.Canny(img_gs, 10, 10)
 
-    # Probabilistic hough transform. Probably not using this
+    # Probabilistic hough transform
 
-    #lines = cv.HoughLinesP(img_edges,rho=1, theta=1*np.pi/180, threshold=10, minLineLength=1, maxLineGap=10);\
+    lines = cv.HoughLinesP(img_edges,rho=.1, theta=1*np.pi/180, threshold=10, minLineLength=10, maxLineGap=10);
+    corners = [];
 
-    #for i in range(len(lines)):
-    #    x1 = lines[i][0][0]
-    #    y1 = lines[i][0][1]    
-    #    x2 = lines[i][0][2]
-    #    y2 = lines[i][0][3]    
-    #    cv.line(img_gs,(x1,y1),(x2,y2),(0,0,0),2);
+    for i in range(len(lines)):
+        x1 = lines[i][0][0]
+        y1 = lines[i][0][1]    
+        x2 = lines[i][0][2]
+        y2 = lines[i][0][3]    
+        cv.line(img,(x1,y1),(x2,y2),(0,255,0),5);
+        corners.append([x1,y1]); corners.append([x2,y2]);
+    corners = np.array(corners);
+    cornersMag = np.empty(len(corners));
+    for i in range(len(corners)):
+        cornersMag[i] = np.linalg.norm(corners[i]);
 
-    lines = cv.HoughLines(img_edges, rho=.1, theta=1*np.pi/180, threshold=100);
+    topLeft = corners[np.argmin(cornersMag)];
+    botRight = corners[np.argmax(cornersMag)];
+    print(topLeft); print(botRight);
 
-    for line in lines:
-        print(line);
-        rho = line[0][0]
-        theta = line[0][1]
-        a = np.cos(theta)
-        b = np.sin(theta)
-        x0 = a * rho
-        y0 = b * rho
+    center = np.abs(topLeft+botRight)/2;
+
+    l = np.sqrt(2*((topLeft[0]-botRight[0])**2+(topLeft[1]-botRight[1])**2));
+
+    lpp = 3/l;
+
+    app = 9/l**2;
+
+    # Now for actually moving the camera
+
+    if (center[0] < width/2-100 or center[0] > width/2+100 or center[1] < height/2-100 or center[1] > height/2+100):
+        print("yes");
+    
+
+    # Standard hough transform
+
+    #lines = cv.HoughLines(img_edges, rho=.1, theta=1*np.pi/180, threshold=100);
+
+    #for line in lines:
+    #    rho = line[0][0];
+    #    theta = line[0][1];
+    #    a = np.cos(theta);
+    #    b = np.sin(theta);
+    #    x0 = a * rho;
+    #    y0 = b * rho;
         
-        x1 = int(x0 + 1000*(-b))
-        x2 = int(x0 - 1000*(-b))
-        y1 = int(y0 + 1000*(a))
-        y2 = int(y0 - 1000*(a))
-        cv.line(img_gs,(x1,y1),(x2,y2),(0,0,0),5)
+    #    x1 = int(x0 + 1000*(-b));
+    #    x2 = int(x0 - 1000*(-b));
+    #    y1 = int(y0 + 1000*(a));
+    #    y2 = int(y0 - 1000*(a));
+    #    cv.line(img_gs,(x1,y1),(x2,y2),(0,0,0),5);
+    #    print([[x1,y1],[x2,y2]]);
 
 
-    plt.imshow(convertRGB(img_gs));
+    plt.imshow(convertRGB(img));
     #cv.waitKey(0);
     plt.show()
 
