@@ -1,67 +1,84 @@
-import picamera as cam;
 import numpy as np;
-from adafruit_motorkit import MotorKit;
+#from adafruit_motorkit import MotorKit;
 from motor import *
+from plant import *
 import time as time
 #from camera import *
 
-# Global Constants
-r = 0.01;       # spool radius [m];
-stepAngle = 360/200*np.pi/180;   # angle per step;
-l=0.28;
-w=0.43;
-h=0.035;
-
-motors = np.array([Motor(0,w/2,0,0.245), Motor(1,-w/2,0,0.15), Motor(2,0,0,0.23), Motor(3,0,l,0.235)]);
-motors = motors[0:2];
-
-# array of plants probably not needed
-
-locs = np.genfromtxt("plantLocs.txt", skip_header=2)[:,2:4];
-locs = locs.astype('float');
-print(locs[0,0]);
-
-plants = [];
-
 def main():
+
+    motors = np.array([Motor(0,l,w,0.9652), Motor(1,l,-w,0.9652), Motor(2,-l,-w,0.9652), Motor(3,-l,w,0.9652)]);
+
+    locs = np.genfromtxt("plantLocs.txt", skip_header=2)[:,2:4].astype('float');
+
+    plants = np.empty(len(locs),dtype=object);
+    print(plants);
     # Initial loop to find what plants will be worked with.
+    count = 0;
     while (True):
+
         plantNum = input("Plant number: ");
 
         if (plantNum == "done" or plantNum == "Done"):
             break;
 
+        elif (plantNum == "all" or plantNum == "All"):
+            for i in range(len(locs)):
+                plants[i]=(Plant(i,locs[i,0],locs[i,1]));
+            break;
+
         else: 
-            plants.append(int(plantNum)-1);
-    time.sleep(3);
+            plantNum = int(plantNum)
+            plants[count] = (Plant(plantNum,locs[plantNum,0],locs[plantNum,1]));
+        count += 1;
+
+    del count, locs;
+
+    #time.sleep(3);
+
     # Loop that actually moves the camera
     while (True):
-        for i in plants:
-            xpos, ypos = locs[i][0], locs[i][1];
-            print("xpos: ", xpos, "ypos: ", ypos);
+        for plant in plants:
+            print("Plant", plant.num, ":");
+            print("    xpos: ", plant.xpos, "ypos: ", plant.ypos);
 
             for motor in motors:
-                motor.changeLength(xpos,ypos);
+                motor.calcSteps(plant.xpos,plant.ypos);
+                print("    Motor", motor.num+1, ":");
+                print("        Length:", motor.length);
+                print("        New length:", motor.lengthNew);
+                print("        Steps:", int((motor.lengthNew-motor.length)/(r*stepAngle)));
 
-            lengths = np.array([motors[0].length, motors[0].length, motors[0].length, motors[0].length]);
-            lengthsNew = np.array([motors[0].lengthNew, motors[0].lengthNew, motors[0].lengthNew, motors[0].lengthNew]);
-            lengthsDiff = lengthsNew-lengths
-            print(lengths);
+            steps = np.array([motors[0].steps, motors[1].steps, motors[2].steps, motors[3].steps])
+            maxMotor = motors[np.argmax(steps)]; maxSteps = np.max(steps);
+            print("    Motor num:",maxMotor.num+1, "Steps:", maxSteps);
+
+            while (maxMotor.count/maxSteps < maxSteps):
+                for motor in motors:
+                    motor.count += np.abs(motor.steps);
+                    if (motor.count % maxSteps <= np.abs(motor.steps)):
+                        a = 1;
+                        #motor.move(1,motor.direction);
+            print("    Steps completed:");
             for motor in motors:
-                if (motor.priority == 1):
-                    print((motor.lengthNew-motor.length)/(r*stepAngle));
-                    motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),0);
+                print("        Motor", motor.num, ":", int(motor.count/maxSteps));
+                motor.count = 0;
 
-            for motor in motors:
-                if (motor.priority == 0):
-                    print((motor.lengthNew-motor.length)/(r*stepAngle));
-                    motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),1);
 
-            time.sleep(5);
+            #for motor in motors:
+            #    if (motor.priority == 1):
+            #        motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),0);
+
+            #for motor in motors:
+            #    if (motor.priority == 0):
+            #        motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),1);
+
+            #time.sleep(5);
             #takePicture(numShelf=1,numPlant=i+1, calibrate=False);
 
             
-        time.sleep(20);
+        #time.sleep(20);
+        break;
 
     # input all positions into this array
 
