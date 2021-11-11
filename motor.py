@@ -1,6 +1,6 @@
 import numpy as np;
-#from adafruit_motorkit import MotorKit;
-#from adafruit_motor import stepper;
+from adafruit_motorkit import MotorKit;
+from adafruit_motor import stepper;
 import time as time;
 
 global r, stepAngle, l, w, h;
@@ -11,9 +11,9 @@ l=0.9144;       # Shelf length/2 [m]
 w=0.3048;       # Shelf width/2 [m]
 h=0.05;         # Camera sag [m]
 
-#kit1 = MotorKit(address=0x60);
-#kit2 = MotorKit(address=0x61);
-#motorAddresses = [kit1.stepper1, kit1.stepper2];
+kit1 = MotorKit(address=0x60);
+kit2 = MotorKit(address=0x61);
+motorAddresses = [kit1.stepper1, kit1.stepper2];
 
 class Motor:
     def __init__(self,num, xpos, ypos, length):

@@ -1,9 +1,8 @@
 import numpy as np;
-#from adafruit_motorkit import MotorKit;
+import time as time
+from camera import *
 from motor import *
 from plant import *
-import time as time
-#from camera import *
 
 def main():
 
@@ -34,7 +33,7 @@ def main():
 
     del count, locs;
 
-    #time.sleep(3);
+    time.sleep(3);
 
     # Loop that actually moves the camera
     while (True):
@@ -43,6 +42,7 @@ def main():
             print("    xpos: ", plant.xpos, "ypos: ", plant.ypos);
 
             for motor in motors:
+                motor.count = 0;
                 motor.calcSteps(plant.xpos,plant.ypos);
                 print("    Motor", motor.num+1, ":");
                 print("        Length:", motor.length);
@@ -59,35 +59,12 @@ def main():
                     if (motor.count % maxSteps <= np.abs(motor.steps)):
                         a = 1;
                         #motor.move(1,motor.direction);
-            print("    Steps completed:");
-            for motor in motors:
-                print("        Motor", motor.num, ":", int(motor.count/maxSteps));
-                motor.count = 0;
+                
+        time.sleep(60); # Sleeps for a minute (will change)
 
-
-            #for motor in motors:
-            #    if (motor.priority == 1):
-            #        motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),0);
-
-            #for motor in motors:
-            #    if (motor.priority == 0):
-            #        motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),1);
-
-            #time.sleep(5);
-            #takePicture(numShelf=1,numPlant=i+1, calibrate=False);
-
-            
-        #time.sleep(20);
         break;
 
     # input all positions into this array
 
-    # While loop to just get this going forever (or just have it run with a BASH script idk)
-    # Need a for loop to go through each motor. This will iterate through an array of values for plant number
-    # Inside the for loop, first call the function to calculate the string length for each position
-    # Then call the function to move the motors. This function will need to calculate the easiest way 
-    # to move the motors which requires the least amount of tension
-
     return 0;
 
-main();
