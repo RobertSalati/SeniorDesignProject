@@ -1,12 +1,8 @@
-from manual import *;
+from motor import *;
 
-motor1 = Motor(0,1,-1);
-motor2 = Motor(1,-1,-1);
+motor = Motor(1,1,-1,1);
 
-motor1.changeLength(1,-1);
-motor2.changeLength(1,-1);
-
-print(motor1.length, motor2.length);
+motor.move(1000,1);
 
 
 

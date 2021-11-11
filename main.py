@@ -1,6 +1,5 @@
 import numpy as np;
-import time as time
-from camera import *
+from adafruit_motorkit import MotorKit;
 from motor import *
 from plant import *
 
@@ -23,12 +22,12 @@ def main():
 
         elif (plantNum == "all" or plantNum == "All"):
             for i in range(len(locs)):
-                plants[i]=(Plant(i,locs[i,0],locs[i,1]));
+                plants[i]=(Plant(i,locs[i,0]/10,locs[i,1]/10));
             break;
 
         else: 
             plantNum = int(plantNum)
-            plants[count] = (Plant(plantNum,locs[plantNum,0],locs[plantNum,1]));
+            plants[count] = (Plant(plantNum,locs[plantNum,0]/10,locs[plantNum,1]/10));
         count += 1;
 
     del count, locs;
@@ -59,9 +58,25 @@ def main():
                     if (motor.count % maxSteps <= np.abs(motor.steps)):
                         a = 1;
                         #motor.move(1,motor.direction);
-                
-        time.sleep(60); # Sleeps for a minute (will change)
+            print("    Steps completed:");
+            for motor in motors:
+                print("        Motor", motor.num, ":", int(motor.count/maxSteps));
+                motor.count = 0;
 
+
+            #for motor in motors:
+            #    if (motor.priority == 1):
+            #        motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),0);
+
+            #for motor in motors:
+            #    if (motor.priority == 0):
+            #        motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),1);
+
+            #time.sleep(5);
+            #takePicture(numShelf=1,numPlant=i+1, calibrate=False);
+
+            
+        #time.sleep(20);
         break;
 
     # input all positions into this array
