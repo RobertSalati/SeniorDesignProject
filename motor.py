@@ -1,6 +1,6 @@
 import numpy as np;
-from adafruit_motorkit import MotorKit;
-from adafruit_motor import stepper;
+#from adafruit_motorkit import MotorKit;
+#from adafruit_motor import stepper;
 import time as time;
 
 global r, stepAngle, l, w, h;
@@ -13,10 +13,10 @@ w = 0.13;
 l=0.205;
 h=0.035;         # Camera sag [m]
 
-kit1 = MotorKit(address=0x60);
-kit2 = MotorKit(address=0x61);
-motorAddresses = [kit1.stepper1, kit1.stepper2];
-motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
+#kit1 = MotorKit(address=0x60);
+#kit2 = MotorKit(address=0x61);
+#motorAddresses = [kit1.stepper1, kit1.stepper2];
+#motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
 
 
 class Motor:
@@ -26,7 +26,6 @@ class Motor:
         self.ypos = ypos;
         self.length=length
         self.lengthNew=length;
-        self.priority=1;
         self.steps=0;
         self.count=0;
         self.direction=1;
@@ -43,6 +42,7 @@ class Motor:
     
     def calcSteps(self,x,y):
         self.length = self.lengthNew;
+        print("Motor", self.num, "xpos:", self.xpos, ", ypos:", self.ypos);
         self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2);
         self.steps = int((self.lengthNew-self.length)/(r*stepAngle));
 

@@ -5,7 +5,6 @@ from plant import *;
 
 def main():
 
-
     w = 0.13;
     l=0.205;
     h=0.015;         # Camera sag [m]
