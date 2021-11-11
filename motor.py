@@ -5,8 +5,8 @@ import time as time;
 
 global r, stepAngle, l, w, h;
 
-r = 0.01;       # spool radius [m];
-stepAngle = 360/200*np.pi/180;   # angle per step [rad];
+r = 0.015;       # spool radius [m];
+stepAngle = 360/400*np.pi/180;   # angle per step [rad];
 l=0.9144;       # Shelf length/2 [m]
 w=0.3048;       # Shelf width/2 [m]
 w = 0.13;
@@ -43,7 +43,7 @@ class Motor:
     
     def calcSteps(self,x,y):
         self.length = self.lengthNew;
-        self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2+h**2);
+        self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2);
         self.steps = int((self.lengthNew-self.length)/(r*stepAngle));
 
         if (self.lengthNew-self.length < 0):
