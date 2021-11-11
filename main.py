@@ -1,5 +1,5 @@
 import numpy as np;
-#from adafruit_motorkit import MotorKit;
+from adafruit_motorkit import MotorKit;
 from motor import *
 from plant import *
 import time as time
@@ -24,17 +24,17 @@ def main():
 
         elif (plantNum == "all" or plantNum == "All"):
             for i in range(len(locs)):
-                plants[i]=(Plant(i,locs[i,0],locs[i,1]));
+                plants[i]=(Plant(i,locs[i,0]/10,locs[i,1]/10));
             break;
 
         else: 
             plantNum = int(plantNum)
-            plants[count] = (Plant(plantNum,locs[plantNum,0],locs[plantNum,1]));
+            plants[count] = (Plant(plantNum,locs[plantNum,0]/10,locs[plantNum,1]/10));
         count += 1;
 
     del count, locs;
 
-    #time.sleep(3);
+    time.sleep(3);
 
     # Loop that actually moves the camera
     while (True):
@@ -57,12 +57,13 @@ def main():
                 for motor in motors:
                     motor.count += np.abs(motor.steps);
                     if (motor.count % maxSteps <= np.abs(motor.steps)):
-                        a = 1;
-                        #motor.move(1,motor.direction);
+                        motor.move(1,motor.direction);
             print("    Steps completed:");
             for motor in motors:
                 print("        Motor", motor.num, ":", int(motor.count/maxSteps));
                 motor.count = 0;
+
+            time.sleep(5);
 
 
             #for motor in motors:
@@ -76,8 +77,6 @@ def main():
             #time.sleep(5);
             #takePicture(numShelf=1,numPlant=i+1, calibrate=False);
 
-            
-        #time.sleep(20);
         break;
 
     # input all positions into this array
