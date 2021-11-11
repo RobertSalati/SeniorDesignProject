@@ -59,7 +59,7 @@ def main():
             while (maxMotor.count/maxSteps < maxSteps):
                 for motor in motors:
                     motor.count += np.abs(motor.steps);
-                    if (motor.count % maxSteps <= np.abs(motor.steps)):
+                    if (motor.count % np.abs(maxSteps) < np.abs(motor.steps)):
                         motor.move(1,motor.direction);
             time.sleep(5);
             

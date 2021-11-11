@@ -39,6 +39,7 @@ class Motor:
             dir = stepper.BACKWARD
         for i in range(int(steps)):
             motorAddresses[self.num].onestep(direction=dir,style = stepper.INTERLEAVE);
+            time.sleep(0.005);
     
     def calcSteps(self,x,y):
         self.length = self.lengthNew;
@@ -49,4 +50,4 @@ class Motor:
         if (self.lengthNew-self.length < 0):
             self.direction=-1;
         else:
-            self.priority=1;
+            self.direction=1;
