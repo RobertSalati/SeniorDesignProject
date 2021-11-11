@@ -9,11 +9,15 @@ r = 0.01;       # spool radius [m];
 stepAngle = 360/200*np.pi/180;   # angle per step [rad];
 l=0.9144;       # Shelf length/2 [m]
 w=0.3048;       # Shelf width/2 [m]
-h=0.05;         # Camera sag [m]
+w = 0.13;
+l=0.205;
+h=0.035;         # Camera sag [m]
 
-#kit1 = MotorKit(address=0x60);
-#kit2 = MotorKit(address=0x61);
-#motorAddresses = [kit1.stepper1, kit1.stepper2];
+kit1 = MotorKit(address=0x60);
+kit2 = MotorKit(address=0x61);
+motorAddresses = [kit1.stepper1, kit1.stepper2];
+motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
+
 
 class Motor:
     def __init__(self,num, xpos, ypos, length):
@@ -39,7 +43,7 @@ class Motor:
     
     def calcSteps(self,x,y):
         self.length = self.lengthNew;
-        self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2);
+        self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2+h**2);
         self.steps = int((self.lengthNew-self.length)/(r*stepAngle));
 
         if (self.lengthNew-self.length < 0):

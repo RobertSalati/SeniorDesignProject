@@ -1,14 +1,18 @@
 import numpy as np;
-from adafruit_motorkit import MotorKit;
-from motor import *
-from plant import *
+from motor import *;
+from plant import *;
+from camera import *;
 
 def main():
 
+
+    w = 0.13;
+    l=0.205;
+    h=0.035;         # Camera sag [m]
     motors = np.array([Motor(0,l,w,0.9652), Motor(1,l,-w,0.9652), Motor(2,-l,-w,0.9652), Motor(3,-l,w,0.9652)]);
 
     locs = np.genfromtxt("plantLocs.txt", skip_header=2)[:,2:4].astype('float');
-
+    locs = np.array([[l/2,w/2],[l/2,0],[l/2,-w/2],[0,-w/2],[0,0],[0,w/2],[-l/2],[w/2],[-l/2,0],[-l/2,-w/2]]);
     plants = np.empty(len(locs),dtype=object);
     print(plants);
     # Initial loop to find what plants will be worked with.
@@ -56,30 +60,10 @@ def main():
                 for motor in motors:
                     motor.count += np.abs(motor.steps);
                     if (motor.count % maxSteps <= np.abs(motor.steps)):
-                        a = 1;
-                        #motor.move(1,motor.direction);
-            print("    Steps completed:");
-            for motor in motors:
-                print("        Motor", motor.num, ":", int(motor.count/maxSteps));
-                motor.count = 0;
-
-
-            #for motor in motors:
-            #    if (motor.priority == 1):
-            #        motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),0);
-
-            #for motor in motors:
-            #    if (motor.priority == 0):
-            #        motors[motor.num].moveMotor((motor.lengthNew-motor.length)/(r*stepAngle),1);
-
-            #time.sleep(5);
-            #takePicture(numShelf=1,numPlant=i+1, calibrate=False);
-
+                        motor.move(1,motor.direction);
             
         #time.sleep(20);
         break;
-
-    # input all positions into this array
 
     return 0;
 
