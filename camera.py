@@ -38,7 +38,7 @@ def takePicture(numShelf, numPlant, calibrate):
 
     return title;
 
-def calibrate(xpos, ypos):
+def calibrate():
     """Calibrates the camera with a vision based feedback loop
     Args:
         None.
@@ -48,27 +48,35 @@ def calibrate(xpos, ypos):
 
 
 
-    title = "calibration.jpg";
+    title = "calibrate.jpg";
     #title = takePicture(numShelf=0,numPlant=0,calibrate=True);  # Takes calibration picture
     
     img = cv.imread(title);     # Creates numpy array of the image
 
-    width = int(img.shape[1])    # Size of the image
-    height = int(img.shape[0])
+    width = int(img.shape[1] * 0.5)
+    
+    # New height
+    height = int(img.shape[0] * 0.5)
+    
+    # New dimensions
+    dim = (width, height)
+    
+    # Resize image
+    img = cv.resize(img, dim, interpolation = cv.INTER_AREA)
 
     img_gs = cv.cvtColor(img, cv.COLOR_BGR2GRAY);       # Converts image to grayscale
 
-    
+    img_blur = cv.GaussianBlur(img,(5,5),0);
 
-    thresh_rgb, img_rgb_binary = cv.threshold(img, 100, 255, cv.THRESH_BINARY);
+    thresh_rgb, img_rgb_binary = cv.threshold(img_blur, 40, 255, cv.THRESH_BINARY);
 
-    thresh_gs, img_gs_binary = cv.threshold(img_gs, 100, 255, cv.THRESH_BINARY);
+    thresh_gs, img_gs_binary = cv.threshold(img_blur, 70, 255, cv.THRESH_BINARY);
 
-    img_edges = cv.Canny(img_gs, 10, 10)
+    img_edges = cv.Canny(img_rgb_binary, 10, 10)
 
     # Probabilistic hough transform
 
-    lines = cv.HoughLinesP(img_edges,rho=.1, theta=1*np.pi/180, threshold=10, minLineLength=10, maxLineGap=10);
+    lines = cv.HoughLinesP(img_edges,rho=1, theta=1*np.pi/180, threshold=10, minLineLength=10, maxLineGap=10);
     corners = [];
 
     for i in range(len(lines)):
@@ -76,7 +84,7 @@ def calibrate(xpos, ypos):
         y1 = lines[i][0][1]    
         x2 = lines[i][0][2]
         y2 = lines[i][0][3]    
-        cv.line(img,(x1,y1),(x2,y2),(0,255,0),5);
+        cv.line(img_rgb_binary,(x1,y1),(x2,y2),(0,255,0),5);
         corners.append([x1,y1]); corners.append([x2,y2]);
     corners = np.array(corners);
     cornersMag = np.empty(len(corners));
@@ -100,29 +108,8 @@ def calibrate(xpos, ypos):
     
     if (center[0] < width/2-100 or center[0] > width/2+100 or center[1] < height/2-100 or center[1] > height/2+100):
         print("yes");
-    
 
-    # Standard hough transform
-
-    #lines = cv.HoughLines(img_edges, rho=.1, theta=1*np.pi/180, threshold=100);
-
-    #for line in lines:
-    #    rho = line[0][0];
-    #    theta = line[0][1];
-    #    a = np.cos(theta);
-    #    b = np.sin(theta);
-    #    x0 = a * rho;
-    #    y0 = b * rho;
-        
-    #    x1 = int(x0 + 1000*(-b));
-    #    x2 = int(x0 - 1000*(-b));
-    #    y1 = int(y0 + 1000*(a));
-    #    y2 = int(y0 - 1000*(a));
-    #    cv.line(img_gs,(x1,y1),(x2,y2),(0,0,0),5);
-    #    print([[x1,y1],[x2,y2]]);
-
-
-    plt.imshow(convertRGB(img));
+    plt.imshow(convertRGB(img_rgb_binary));
     #cv.waitKey(0);
     plt.show()
 
