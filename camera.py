@@ -46,8 +46,6 @@ def calibrate():
         None.
     """
 
-
-
     title = "calibrate.jpg";
     #title = takePicture(numShelf=0,numPlant=0,calibrate=True);  # Takes calibration picture
     
@@ -105,9 +103,11 @@ def calibrate():
 
     # Now for actually moving the camera
 
-    
     if (center[0] < width/2-100 or center[0] > width/2+100 or center[1] < height/2-100 or center[1] > height/2+100):
-        print("yes");
+        print("calibrating");
+        currentPos = [];
+
+
 
     plt.imshow(convertRGB(img_rgb_binary));
     #cv.waitKey(0);
