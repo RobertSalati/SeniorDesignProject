@@ -62,6 +62,8 @@ def calibrate():
     # Resize image
     img = cv.resize(img, dim, interpolation = cv.INTER_AREA)
 
+    img = cv.rotate(img,cv.ROTATE_180);
+
     img_gs = cv.cvtColor(img, cv.COLOR_BGR2GRAY);       # Converts image to grayscale
 
     img_blur = cv.GaussianBlur(img,(5,5),0);
