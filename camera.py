@@ -1,13 +1,13 @@
-#from picamera import PiCamera;
+from picamera import PiCamera;
 import numpy as np;
 import time as time;
 from datetime import datetime;
 import cv2 as cv;
 import matplotlib.pyplot as plt;
-#from motor import *;
+from motor import *;
 
 # Global variables
-#camera = PiCamera();
+camera = PiCamera();
 
 # Written and tested
 def takePicture(numShelf, numPlant, calibrate):
@@ -38,7 +38,7 @@ def takePicture(numShelf, numPlant, calibrate):
 
     return title;
 
-def calibrate():
+def calibrate(motors):
     """Calibrates the camera with a vision based feedback loop
     Args:
         None.
@@ -46,8 +46,7 @@ def calibrate():
         None.
     """
 
-    title = "calibrate.jpg";
-    #title = takePicture(numShelf=0,numPlant=0,calibrate=True);  # Takes calibration picture
+    title = takePicture(numShelf=0,numPlant=0,calibrate=True);  # Takes calibration picture
     
     img = cv.imread(title);     # Creates numpy array of the image
 
@@ -61,8 +60,6 @@ def calibrate():
     
     # Resize image
     img = cv.resize(img, dim, interpolation = cv.INTER_AREA)
-
-    img = cv.rotate(img,cv.ROTATE_180);
 
     img_gs = cv.cvtColor(img, cv.COLOR_BGR2GRAY);       # Converts image to grayscale
 
@@ -99,21 +96,32 @@ def calibrate():
 
     l = np.sqrt(2*((topLeft[0]-botRight[0])**2+(topLeft[1]-botRight[1])**2));
 
-    lpp = 3/l;
+    lpp = 0.03/l;
 
-    app = 9/l**2;
+    app = 0.09/l**2;
 
     # Now for actually moving the camera
+    print("locs:", center[0], center[1]);
+    print("Dimensions:",width/2, height/2);
 
-    if (center[0] < width/2-100 or center[0] > width/2+100 or center[1] < height/2-100 or center[1] > height/2+100):
+    if (center[0] < width/2-50 or center[0] > width/2+50 or center[1] < height/2-50 or center[1] > height/2+50):
         print("calibrating");
-        currentPos = [];
-
-
-
-    plt.imshow(convertRGB(img_rgb_binary));
-    #cv.waitKey(0);
-    plt.show()
+        dx = (center[0]-width/2)*lpp
+        dy = (center[1]-height/2)*lpp
+        for motor in motors:
+            motor.calcLengths(dx, dy)
+            motor.calcSteps();
+        steps = np.array([np.abs(motors[0].steps), np.abs(motors[1].steps), np.abs(motors[2].steps), np.abs(motors[3].steps)])
+        maxMotor = motors[np.argmax(steps)]; maxSteps = np.abs(maxMotor.steps);
+        print(steps);
+        while (maxMotor.count/maxSteps < maxSteps):
+            for motor in motors:
+                motor.count += np.abs(motor.steps);
+                if (motor.count % np.abs(maxSteps) < np.abs(motor.steps)):
+                    motor.move(steps=1,dir = motor.direction); 
+        calibrate(motors);
+    for motor in motors:
+        motor.length = np.sqrt(motor.xpos**2+motor.xpos**2);
 
 
 
@@ -143,4 +151,4 @@ def convertRGB(img):
 
 
 #coverageArea("cam_test.jpg");
-calibrate();
+

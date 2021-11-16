@@ -1,14 +1,14 @@
 import numpy as np;
 from motor import *;
 from plant import *;
-#from camera import *;
+from camera import *;
 
 def main():
 
     w = 0.13;
     l=0.205;
     h=0.015;         # Camera sag [m]
-    motors = np.array([Motor(0,l,w,0.225), Motor(1,l,-w,0.225), Motor(2,-l,-w,0.225), Motor(3,-l,w,0.225)]);
+    motors = np.array([Motor(0,l,w,0.215), Motor(1,l,-w,0.24), Motor(2,-l,-w,0.24), Motor(3,-l,w,0.235)]);
 
     locs = np.genfromtxt("plantLocs.txt", skip_header=2)[:,2:4].astype('float');
     locs = np.array([[l/2,w/2],[l/2,0],[l/2,-w/2],[0,-w/2],[0,0],[0,w/2],[-l/2, w/2],[-l/2,0],[-l/2,-w/2]]);
@@ -38,6 +38,8 @@ def main():
 
     time.sleep(3);
 
+    calibrate(motors);
+
     # Loop that actually moves the camera
     while (True):
         for plant in plants:
@@ -46,7 +48,8 @@ def main():
 
             for motor in motors:
                 motor.count = 0;
-                motor.calcSteps(plant.xpos,plant.ypos);
+                motor.calcLengths(plant.xpos,plant.ypos);
+                motor.calcSteps();
                 print("    Motor", motor.num+1, ":");
                 print("        Length:", motor.length);
                 print("        New length:", motor.lengthNew);
@@ -60,7 +63,7 @@ def main():
                 for motor in motors:
                     motor.count += np.abs(motor.steps);
                     if (motor.count % np.abs(maxSteps) < np.abs(motor.steps)):
-                        motor.move(1,motor.direction);
+                        motor.move(steps=1,dir=motor.direction);
             time.sleep(5);
             
         #time.sleep(20);
