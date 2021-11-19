@@ -39,9 +39,9 @@ def takePicture(numShelf, numPlant, calibrate):
     return title;
 
 def calibrate(motors):
-    """Calibrates the camera with a vision based feedback loop
+    """Moves the camera over the red square.
     Args:
-        None.
+        motors (Array, type Motor): Array of motor objects.
     Returns:
         None.
     """

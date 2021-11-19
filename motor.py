@@ -54,3 +54,9 @@ class Motor:
             self.direction=-1;
         else:
             self.direction=1;
+    
+    def printMotor(self):
+        print("Motor", motor.num+1, ":");
+        print("    Length:", motor.length);
+        print("    New length:", motor.lengthNew);
+        print("    Steps:", motor.steps);
