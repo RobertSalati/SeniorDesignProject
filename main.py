@@ -1,14 +1,14 @@
 import numpy as np;
 from motor import *;
 from plant import *;
-from camera import *;
+#from camera import *;
 
 def main():
 
-    w = 0.13;
-    l=0.205;
-    h=0.015;         # Camera sag [m]
-    motors = np.array([Motor(0,l,w,0.215), Motor(1,l,-w,0.24), Motor(2,-l,-w,0.24), Motor(3,-l,w,0.235)]);
+    w = 0.229/2;
+    l=0.375/2;
+    h=0.005;         # Camera sag [m]
+    motors = np.array([Motor(0,l,w,0.21), Motor(1,l,-w,0.21), Motor(2,-l,-w,0.21), Motor(3,-l,w,0.205)]);
 
     locs = np.genfromtxt("plantLocs.txt", skip_header=2)[:,2:4].astype('float');
     locs = np.array([[l/2,w/2],[l/2,0],[l/2,-w/2],[0,-w/2],[0,0],[0,w/2],[-l/2, w/2],[-l/2,0],[-l/2,-w/2]]);
@@ -38,7 +38,6 @@ def main():
 
     time.sleep(3);
 
-    calibrate(motors);
 
     # Loop that actually moves the camera
     while (True):

@@ -25,7 +25,6 @@ while True:
         direction = -1;
     time.sleep(2);
     for i in range(int(steps)):
-        motors[num1-1].moveMotor(1, direction);
-        motors[num2-1].moveMotor(1, direction*-1)
+        motors[num1].move(1, direction);
     
 

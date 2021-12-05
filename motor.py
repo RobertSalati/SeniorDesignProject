@@ -39,13 +39,14 @@ class Motor:
         elif (dir == 1):    # Unwinds the spool - Increases length
             dir = stepper.BACKWARD
         for i in range(int(steps)):
-            motorAddresses[self.num].onestep(direction=dir,style = stepper.INTERLEAVE);
-            time.sleep(0.005);
+            motorAddresses[self.num].onestep(direction=dir);
+            #motorAddresses[self.num].onestep(direction=dir,style = stepper.INTERLEAVE);
+            time.sleep(0.05);
     
     def calcLengths(self,x, y):
         self.length = self.lengthNew;
         print("Motor", self.num, "xpos:", self.xpos, ", ypos:", self.ypos);
-        self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2);
+        self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2)-0.01;
 
     def calcSteps(self):
         self.steps = int((self.lengthNew-self.length)/(r*stepAngle));
