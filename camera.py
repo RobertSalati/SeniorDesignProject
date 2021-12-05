@@ -39,9 +39,9 @@ def takePicture(numShelf, numPlant, calibrate):
     return title;
 
 def calibrate(motors):
-    """Calibrates the camera with a vision based feedback loop
+    """Moves the camera over the red square.
     Args:
-        None.
+        motors (Array, type Motor): Array of motor objects.
     Returns:
         None.
     """
@@ -60,8 +60,6 @@ def calibrate(motors):
     
     # Resize image
     img = cv.resize(img, dim, interpolation = cv.INTER_AREA)
-
-    img = cv.rotate(img, cv.ROTATE_180);
 
     img_gs = cv.cvtColor(img, cv.COLOR_BGR2GRAY);       # Converts image to grayscale
 
@@ -152,5 +150,5 @@ def convertRGB(img):
 
 
 
-#coverageArea("cam_test.jpg");
+coverageArea("cam_test.jpg");
 
