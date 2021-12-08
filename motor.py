@@ -9,6 +9,9 @@ global r, stepAngle, l, w, h;
 r = 0.015;       # spool radius [m];
 stepAngle = 360/200*np.pi/180;   # angle per step [rad];
 
+numSteps = 50;
+
+
 kit1 = MotorKit(address=0x60);
 kit2 = MotorKit(address=0x61);
 #motorAddresses = [kit1.stepper1, kit1.stepper2];
@@ -37,7 +40,8 @@ class Motor:
             motorAddresses[self.num].onestep(direction=dir);
             #motorAddresses[self.num].onestep(direction=dir,style = stepper.INTERLEAVE);
             time.sleep(0.05);
-    
+    def release(self):
+        motorAddresses[self.num].release();
     def calcLengths(self,x, y):
         self.length = self.lengthNew;
         print("Motor", self.num, "xpos:", self.xpos, ", ypos:", self.ypos);
@@ -74,3 +78,46 @@ def controlMotors(plant, motors):
             motor.count += np.abs(motor.steps);
             if (motor.count % np.abs(maxSteps) < np.abs(motor.steps)):
                 motor.move(steps=1,dir=motor.direction);
+
+def controlMotorsTest(plant,motors):
+    
+    loop = True;
+
+    for motor in motors:        # calculate parameters for movement
+        motor.count = 0;
+        motor.calcLengths(plant.xpos,plant.ypos);
+        motor.calcSteps();
+        motor.printMotor();
+
+    while loop == True:
+        for motor in motors:
+            print("num: ", motor.num);
+            if motor.count == motor.steps:
+                print("   No steps remaining")
+                motor.release();
+
+            elif numSteps < np.abs(motor.steps)-np.abs(motor.count):
+                print("   Moving 50 steps");
+                print("  ", np.abs(motor.steps)-np.abs(motor.count), "steps remaining");
+                motor.move(steps=50, dir=motor.direction);
+                motor.count += 50
+                motor.release();
+
+            elif numSteps > np.abs(motor.steps)-np.abs(motor.count):
+                print("   Moving", np.abs(motor.steps)-np.abs(motor.count), "steps");
+                motor.move(steps=motor.steps-numSteps, dir=motor.direction);
+                motor.count += np.abs(motor.steps)-np.abs(motor.count);
+                motor.release();
+
+            time.sleep(0.5);
+            
+        loop = False;
+        for motor in motors:
+            if np.abs(motor.count) < np.abs(motor.steps):
+                loop = True;
+                break;
+
+        print("----------------------------------------");
+        #time.sleep(1);
+
+
