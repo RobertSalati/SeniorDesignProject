@@ -14,8 +14,6 @@ def main():
 
     #calibrate(motors);
 
-    del count, locs;
-
     time.sleep(3);
 
     # Loop that actually moves the camera
@@ -27,7 +25,7 @@ def main():
 
         time.sleep(5);
             
-    time.sleep(20);
+        #time.sleep(20);
         break;
 
     return 0;

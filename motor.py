@@ -1,18 +1,18 @@
 import numpy as np;
-#from adafruit_motorkit import MotorKit;
-#from adafruit_motor import stepper;
+from adafruit_motorkit import MotorKit;
+from adafruit_motor import stepper;
 import time as time;
 
 
 global r, stepAngle, l, w, h;
 
 r = 0.015;       # spool radius [m];
-stepAngle = 360/400*np.pi/180;   # angle per step [rad];
+stepAngle = 360/200*np.pi/180;   # angle per step [rad];
 
-#kit1 = MotorKit(address=0x60);
-#kit2 = MotorKit(address=0x61);
+kit1 = MotorKit(address=0x60);
+kit2 = MotorKit(address=0x61);
 #motorAddresses = [kit1.stepper1, kit1.stepper2];
-#motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
+motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
 
 
 class Motor:
@@ -72,5 +72,5 @@ def controlMotors(plant, motors):
     while (maxMotor.count/maxSteps < maxSteps):
         for motor in motors:
             motor.count += np.abs(motor.steps);
-            #if (motor.count % np.abs(maxSteps) < np.abs(motor.steps)):
-            #    motor.move(steps=1,dir=motor.direction);
+            if (motor.count % np.abs(maxSteps) < np.abs(motor.steps)):
+                motor.move(steps=1,dir=motor.direction);
