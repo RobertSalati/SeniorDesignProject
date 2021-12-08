@@ -14,21 +14,22 @@ def main():
 
     #calibrate(motors);
 
-    del count, locs;
-
-    time.sleep(3);
+    #time.sleep(3);
 
     # Loop that actually moves the camera
-    while (True):
+    loop = True;
+    while (loop == True):
 
         for plant in plants:
             plant.printPlant();         # Print out plant information
-            controlMotors(plant, motors)
+            controlMotorsTest(plant, motors)
+            time.sleep(5);
+        loop = False;
 
-        time.sleep(5);
+        
             
-    time.sleep(20);
-        break;
+    #time.sleep(20);
+        #break;
 
     return 0;
 
