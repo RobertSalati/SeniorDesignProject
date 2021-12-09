@@ -40,8 +40,7 @@ class Plant:
         Returns:
             None.
         """
-
-        print("Plant", self.num+1, "\n    Plant Position: (", self.xpos, ",", self.ypos, ")");
+        print("\nPlant", self.num+1, "\n    Plant Position: (", self.xpos, ",", self.ypos, ")");
 
 def selectPlants():
     """Function which takes user input to decide which plants will have pictures taken of them
@@ -50,9 +49,9 @@ def selectPlants():
     Returns:
         Plants (Array, type Object) Array of plant objects.
     """
-    #data = np.genfromtxt("plantLocs.txt", skip_header=2);        # Read plant locations from text file
-    #locs = data[:,2:4].astype('float');
-    locs = np.array([[l/2,w/2],[l/2,0],[l/2,-w/2],[0,-w/2],[0,0],[0,w/2],[-l/2, w/2],[-l/2,0],[-l/2,-w/2]]);
+    data = np.genfromtxt("plantLocs.txt", skip_header=2);        # Read plant locations from text file
+    locs = data[:,2:4].astype('float');
+    #locs = np.array([[l/2,w/2],[l/2,0],[l/2,-w/2],[0,-w/2],[0,0],[0,w/2],[-l/2, w/2],[-l/2,0],[-l/2,-w/2]]);
     
     plants = np.empty(len(locs),dtype=object);         # Create empty array for plant objects (maybe replace).
 
@@ -61,7 +60,7 @@ def selectPlants():
 
     while (True):
 
-        plantNum = input("Plant number: ");
+        plantNum = input("\nPlant number: ");
 
         if (plantNum == "done" or plantNum == "Done"):      # Done inputting values
             break;      
@@ -74,7 +73,17 @@ def selectPlants():
 
         else: 
             plantNum = int(plantNum)-1          # Adds one plant at a time
-            plants[count] = (Plant(plantNum,locs[plantNum][0],locs[plantNum][1]));
+            plant = Plant(plantNum,locs[plantNum][0],locs[plantNum][1]);
+            plant.printPlant();
+            plants[count] = (plant);
+
         count += 1;
+
     plants = plants[0:count];
+    print("Confirm plants: ")
+    for plant in plants:
+        plant.printPlant();
+
     return plants;
+
+selectPlants();
