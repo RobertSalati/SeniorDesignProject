@@ -168,4 +168,7 @@ def controlMotorsTest2(plant,motors):
 
         time.sleep(1);
 
+def compensate(motors):
+    for motor in motors:
+        motor.move(50,-1);
 
