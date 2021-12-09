@@ -53,7 +53,7 @@ def selectPlants():
     #data = np.genfromtxt("plantLocs.txt", skip_header=2);        # Read plant locations from text file
     #locs = data[:,2:4].astype('float');
     locs = np.array([[l/2,w/2],[l/2,0],[l/2,-w/2],[0,-w/2],[0,0],[0,w/2],[-l/2, w/2],[-l/2,0],[-l/2,-w/2]]);
-
+    
     plants = np.empty(len(locs),dtype=object);         # Create empty array for plant objects (maybe replace).
 
     # Initial loop to find what plants will be worked with.

@@ -9,7 +9,7 @@ global r, stepAngle, l, w, h;
 r = 0.015;       # spool radius [m];
 stepAngle = 360/200*np.pi/180;   # angle per step [rad];
 
-numSteps = 50;
+numSteps = 25;
 
 
 kit1 = MotorKit(address=0x60);
@@ -32,9 +32,9 @@ class Motor:
 
     def move(self, steps, dir):
 
-        if (dir == -1):  # Winds the spool up - Decreases length
+        if (dir == 1):  # Winds the spool up - Decreases length
             dir = stepper.FORWARD;
-        elif (dir == 1):    # Unwinds the spool - Increases length
+        elif (dir == -1):    # Unwinds the spool - Increases length
             dir = stepper.BACKWARD
         for i in range(int(steps)):
             motorAddresses[self.num].onestep(direction=dir);
@@ -45,21 +45,22 @@ class Motor:
     def calcLengths(self,x, y):
         self.length = self.lengthNew;
         print("Motor", self.num, "xpos:", self.xpos, ", ypos:", self.ypos);
-        self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2)-0.01;
+        self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2)-0.02;
 
     def calcSteps(self):
         self.steps = int((self.lengthNew-self.length)/(r*stepAngle));
 
-        if (self.lengthNew-self.length < 0):
-            self.direction=-1;
+        if (self.steps < 0):
+            self.direction=-1;      # Unwind
         else:
-            self.direction=1;
+            self.direction=1;       # Wind up
     
     def printMotor(self):
-        print("Motor", self.num+1, ":");
-        print("    Length:", self.length);
-        print("    New length:", self.lengthNew);
-        print("    Steps:", self.steps);
+        print("    Motor", self.num+1, ":");
+        print("        Coordinates:","(", self.xpos, ",", self.ypos, ")"); 
+        print("        Length:", self.length);
+        print("        New length:", self.lengthNew);
+        print("        Steps:", self.steps);
 
 def controlMotors(plant, motors):
 
@@ -88,9 +89,25 @@ def controlMotorsTest(plant,motors):
         motor.calcLengths(plant.xpos,plant.ypos);
         motor.calcSteps();
         motor.printMotor();
+    
+    motorsSorted = np.empty([4],dtype='object');
+    ind = 0;
+    for motor in motors:
+        if motor.direction == 1:
+            motorsSorted[ind] = motor;
+            ind += 1;
+
+    for motor in motors:
+        if motor.direction == -1:
+            motorsSorted[ind] = motor;
+            ind += 1;
+
+    for motor in motorsSorted:
+        print(motor.steps);
+
 
     while loop == True:
-        for motor in motors:
+        for motor in motorsSorted:
             print("num: ", motor.num);
             if motor.count == motor.steps:
                 print("   No steps remaining")
@@ -109,7 +126,7 @@ def controlMotorsTest(plant,motors):
                 motor.count += np.abs(motor.steps)-np.abs(motor.count);
                 motor.release();
 
-            time.sleep(0.5);
+            time.sleep(0.01);
             
         loop = False;
         for motor in motors:

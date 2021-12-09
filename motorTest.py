@@ -12,10 +12,12 @@ import numpy as np
 
 motors = np.array([Motor(0,0,0,0), Motor(1,0,0,0), Motor(2,0,0,0), Motor(3,0,0,0)]);
 
+for motor in motors:
+    motor.release();
+
 while True:
     angle = int(input("Move angle: "))*np.pi/180;
     num1 = int(input("Motor number: "));
-    num2 = int(input("Motor number: "));
     stepAngle = 2*np.pi/400;
     steps = abs(angle/stepAngle);
     print(steps);
@@ -26,5 +28,6 @@ while True:
     time.sleep(2);
     for i in range(int(steps)):
         motors[num1].move(1, direction);
+    motors[num1].release();
     
 

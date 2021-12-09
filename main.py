@@ -8,8 +8,9 @@ def main():
     w = 0.229/2;
     l=0.375/2;
     h=0.005;         # Camera sag [m]
-    motors = np.array([Motor(0,l,w,0.21), Motor(1,l,-w,0.21), Motor(2,-l,-w,0.21), Motor(3,-l,w,0.205)]);
-
+    motors = np.array([Motor(0,l,w,0.21), Motor(1,l,-w,0.21), Motor(2,-l,-w,0.21), Motor(3,-l,w,0.21)]);
+    for motor in motors:
+        motor.release();
     plants = selectPlants();
 
     #calibrate(motors);
