@@ -44,7 +44,6 @@ class Motor:
         motorAddresses[self.num].release();
     def calcLengths(self,x, y):
         self.length = self.lengthNew;
-        print("Motor", self.num, "xpos:", self.xpos, ", ypos:", self.ypos);
         self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2)-0.02;
 
     def calcSteps(self):
@@ -108,7 +107,7 @@ def controlMotorsTest(plant,motors):
 
     while loop == True:
         for motor in motorsSorted:
-            print("num: ", motor.num);
+            print("num: ", motor.num+1);
             if motor.count == motor.steps:
                 print("   No steps remaining")
                 motor.release();
@@ -137,4 +136,7 @@ def controlMotorsTest(plant,motors):
         print("----------------------------------------");
         #time.sleep(1);
 
+def compensate(motors):
+    for motor in motors:
+        motor.move(50,-1);
 

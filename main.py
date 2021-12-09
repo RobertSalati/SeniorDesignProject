@@ -24,6 +24,7 @@ def main():
         for plant in plants:
             plant.printPlant();         # Print out plant information
             controlMotorsTest(plant, motors)
+            compensate(motors);
             time.sleep(5);
         loop = False;
 
