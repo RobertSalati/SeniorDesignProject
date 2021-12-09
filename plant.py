@@ -80,10 +80,8 @@ def selectPlants():
         count += 1;
 
     plants = plants[0:count];
-    print("Confirm plants: ")
     for plant in plants:
         plant.printPlant();
 
     return plants;
 
-selectPlants();

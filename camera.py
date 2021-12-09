@@ -145,10 +145,5 @@ def coverageArea(title):
 
 def convertRGB(img):
     return cv.cvtColor(img, cv.COLOR_BGR2RGB);
-    
 
-
-
-
-coverageArea("cam_test.jpg");
 

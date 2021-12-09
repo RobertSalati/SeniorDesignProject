@@ -9,7 +9,7 @@ global r, stepAngle, l, w, h;
 r = 0.015;       # spool radius [m];
 stepAngle = 360/200*np.pi/180;   # angle per step [rad];
 
-numSteps = 25;
+numSteps = 100;
 
 
 kit1 = MotorKit(address=0x60);
@@ -95,12 +95,12 @@ def controlMotorsTest1(plant,motors):
     motorsSorted = np.empty([4],dtype='object');
     ind = 0;
     for motor in motors:
-        if motor.direction == -1:
+        if motor.direction == 1:
             motorsSorted[ind] = motor;
             ind += 1;
 
     for motor in motors:
-        if motor.direction == 1:
+        if motor.direction == -1:
             motorsSorted[ind] = motor;
             ind += 1;
 
@@ -117,17 +117,17 @@ def controlMotorsTest1(plant,motors):
 
             elif numSteps < np.abs(motor.steps)-np.abs(motor.count):
 
-                motor.move(steps=50, dir=motor.direction);
-                motor.count += numSteps;
+                motor.move(steps=numSteps, dir=motor.direction);
                 motor.release();
+                motor.count += numSteps;
                 print("   Moving", numSteps, "steps");
                 print("  ", np.abs(motor.steps)-np.abs(motor.count), "steps remaining");
 
-            elif numSteps > np.abs(motor.steps)-np.abs(motor.count):
-                motor.move(steps=motor.steps-numSteps, dir=motor.direction);
+            elif numSteps >= np.abs(motor.steps)-np.abs(motor.count):
+                motor.move(steps=np.abs(motor.steps)-np.abs(motor.count), dir=motor.direction);
                 print("   Moving", np.abs(motor.steps)-np.abs(motor.count), "steps");
-                motor.count += np.abs(motor.steps)-np.abs(motor.count);
                 motor.release();
+                motor.count += np.abs(motor.steps)-np.abs(motor.count);
                 
 
             time.sleep(0.01);
@@ -153,12 +153,12 @@ def controlMotorsTest2(plant,motors):
     motorsSorted = np.empty([4],dtype='object');
     ind = 0;
     for motor in motors:
-        if motor.direction == -1:
+        if motor.direction == 1:
             motorsSorted[ind] = motor;
             ind += 1;
 
     for motor in motors:
-        if motor.direction == 1:
+        if motor.direction == -1:
             motorsSorted[ind] = motor;
             ind += 1;
 
