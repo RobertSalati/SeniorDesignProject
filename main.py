@@ -2,6 +2,7 @@ import numpy as np;
 from motor import *;
 from plant import *;
 #from camera import *;
+import time as time;
 
 def main():
 
@@ -23,8 +24,12 @@ def main():
 
         for plant in plants:
             plant.printPlant();         # Print out plant information
-            controlMotorsTest(plant, motors)
-            time.sleep(5);
+            controlMotorsTest1(plant, motors)
+            #time.sleep(5);
+
+            #name = takePicture(numShelf=1, numPlant=plant.num, calibrate=False):
+            input("press enter to continue: ");
+
         loop = False;
 
         break
