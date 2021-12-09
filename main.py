@@ -8,7 +8,7 @@ def main():
     w = 0.229/2;
     l=0.375/2;
     h=0.005;         # Camera sag [m]
-    motors = np.array([Motor(0,l,w,0.21), Motor(1,l,-w,0.21), Motor(2,-l,-w,0.21), Motor(3,-l,w,0.21)]);
+    motors = np.array([Motor(0,0.7366,0.3048,0.8636), Motor(1,0.7366,-0.3048,0.8763), Motor(2, -0.7747, -.3048, 0.8001), Motor(3,-0.7747, 0.3048,0.8128)]);
     for motor in motors:
         motor.release();
     plants = selectPlants();
@@ -26,6 +26,7 @@ def main():
             controlMotorsTest(plant, motors)
             compensate(motors);
             time.sleep(5);
+            
         loop = False;
 
         break
