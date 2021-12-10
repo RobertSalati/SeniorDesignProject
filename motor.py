@@ -9,8 +9,6 @@ global r, stepAngle, l, w, h;
 r = 0.015;       # spool radius [m];
 stepAngle = 360/200*np.pi/180;   # angle per step [rad];
 
-numSteps = 100;
-
 
 kit1 = MotorKit(address=0x60);
 kit2 = MotorKit(address=0x61);
@@ -30,7 +28,12 @@ class Motor:
 
 
     def move(self, steps, dir):
-
+        """Moves the motor a desired number of steps
+        Args:
+            steps (int): number of steps the motor needs to take
+            dir (int): direction of motor. 1 to decrease length, -1 to increase length
+            length (float): length 
+        """
         if (dir == 1):  # Winds the spool up - Decreases length
             dir = stepper.FORWARD;
         elif (dir == -1):    # Unwinds the spool - Increases length
@@ -40,13 +43,32 @@ class Motor:
             #motorAddresses[self.num].onestep(direction=dir,style = stepper.INTERLEAVE);
             time.sleep(0.05);
     def release(self):
+        """Turns off holding torque
+        Args: 
+            None.
+        Returns:
+            None.
+        """
         motorAddresses[self.num].release();
 
     def calcLengths(self,x, y):
+        """Calculates new string length.
+        Args:
+            x (float): Desired x coordinate of the camera
+            y (float): Desired y coordinate of the camera.
+        Returns:
+            None.
+        """
         self.length = self.lengthNew;
         self.lengthNew = np.sqrt((self.xpos-x)**2+(self.ypos-y)**2)-0.02;
 
     def calcSteps(self):
+        """Calculates the number of steps the motor needs to take
+        Args:
+            None.
+        Returns:
+            None.
+        """
         self.steps = int((self.lengthNew-self.length)/(r*stepAngle));
 
         if (self.steps < 0):
@@ -55,6 +77,12 @@ class Motor:
             self.direction=1;       # Wind up
     
     def printMotor(self):
+        """Prints out motor information.
+        Args:
+            None.
+        Returns: 
+            None.
+        """
         print(" ");
         print("    Motor", self.num+1, ":");
         print("        Coordinates:","(", self.xpos, ",", self.ypos, ")"); 
@@ -64,7 +92,13 @@ class Motor:
 
 
 def controlMotors(plant, motors):
-
+    """Main function to move the motors. Calculates the lengths and number of steps, and moves all motors simultaneously
+    Args:
+        plant (object): Plant which the camera needs to move to.
+        motors (Array dtype:object): Array of 4 motor objects.
+    Returns:
+        None.
+    """
     for motor in motors:
         motor.count = 0;
         motor.calcLengths(plant.xpos,plant.ypos);
@@ -84,7 +118,15 @@ def controlMotors(plant, motors):
                 motor.move(steps=1,dir=motor.direction);
 
 def controlMotorsTest1(plant,motors):
-    
+    """Main function to move the motors. Calculates the lengths and number of steps, and moves motors a prescribed number of steps at a time.
+    Args:
+        plant (object): Plant which the camera needs to move to.
+        motors (Array dtype:object): Array of 4 motor objects.
+    Returns:
+        None.
+    """    
+
+    numSteps = 100;
     loop = True;
 
     for motor in motors:        # calculate parameters for movement
@@ -142,6 +184,13 @@ def controlMotorsTest1(plant,motors):
         time.sleep(1);
 
 def controlMotorsTest2(plant,motors):
+    """Main function to move the motors. Calculates the lengths and number of steps, and moves motors all their steps separately
+    Args:
+        plant (object): Plant which the camera needs to move to.
+        motors (Array dtype:object): Array of 4 motor objects.
+    Returns:
+        None.
+    """
 
     for motor in motors:        # calculate parameters for movement
         motor.count = 0;

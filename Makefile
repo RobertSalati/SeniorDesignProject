@@ -1,5 +1,6 @@
-main: main.py
+main: main.py release.py
 	python3 main.py
+	python3 release.py
 
 clearphotos: 
 	rm ./images/*.jpg

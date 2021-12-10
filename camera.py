@@ -144,6 +144,12 @@ def coverageArea(title):
 
 
 def convertRGB(img):
+    """Converts color scheme from BGR to RGB. Purely for plotting purposes if desired.
+    Args: 
+        img (int array): matrix representing image to be converted
+    Returns:
+        None.
+    """
     return cv.cvtColor(img, cv.COLOR_BGR2RGB);
 
 
