@@ -1,6 +1,6 @@
 import numpy as np;
-#from adafruit_motorkit import MotorKit;
-#from adafruit_motor import stepper;
+from adafruit_motorkit import MotorKit;
+from adafruit_motor import stepper;
 import time as time;
 
 
@@ -10,9 +10,9 @@ r = 0.015;       # spool radius [m];
 stepAngle = 360/200*np.pi/180;   # angle per step [rad];
 
 
-#kit1 = MotorKit(address=0x60);
-#kit2 = MotorKit(address=0x61);
-#motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
+kit1 = MotorKit(address=0x60);
+kit2 = MotorKit(address=0x61);
+motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
 
 
 class Motor:
@@ -35,7 +35,6 @@ class Motor:
         self.count=0;
         self.direction=1;
 
-
     def move(self, steps, dir):
         """Moves the motor a desired number of steps
         Args:
@@ -50,6 +49,7 @@ class Motor:
         for i in range(int(steps)):
             motorAddresses[self.num].onestep(direction=dir);
             time.sleep(0.05);
+
     def release(self):
         """Turns off holding torque
         Args: 
