@@ -42,9 +42,9 @@ class Motor:
             dir (int): direction of motor. 1 to decrease length, -1 to increase length
             length (float): length 
         """
-        if (dir == 1):  # Winds the spool up - Decreases length
+        if (dir == 1):  # Unwinds the spool - Increases length
             dir = stepper.FORWARD;
-        elif (dir == -1):    # Unwinds the spool - Increases length
+        elif (dir == -1):    # Winds the spool - Decreases length
             dir = stepper.BACKWARD
         for i in range(int(steps)):
             motorAddresses[self.num].onestep(direction=dir);
@@ -106,7 +106,7 @@ def compensate(motors):
         None.
     """
     for motor in motors:
-        motor.move(25, 1);
+        motor.move(25, -1);
 
 def controlMotors(plant,motors):
     """Main function to move the motors. Calculates the lengths and number of steps, and moves motors a prescribed number of steps at a time.
