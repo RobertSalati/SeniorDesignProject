@@ -5,7 +5,6 @@ import time;
 from motor import *;
 import numpy as np
 
-#2048 steps for 1 rotation with small motor
 #200 steps for 1 rotation with big motor
 
 # 360 = 2048
@@ -15,7 +14,7 @@ motors = np.array([Motor(0,0,0,0), Motor(1,0,0,0), Motor(2,0,0,0), Motor(3,0,0,0
 for motor in motors:
     motor.release();
 
-while True:
+while (True):
     angle = int(input("Move angle: "))*np.pi/180;
     num1 = int(input("Motor number: "));
     stepAngle = 2*np.pi/400;

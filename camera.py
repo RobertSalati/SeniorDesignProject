@@ -21,7 +21,7 @@ def takePicture(numShelf, numPlant, calibrate):
     """
 
     camera.start_preview();    # Opens the camera
-    time.sleep(5);        # Sleeps for 5 seconds to allow the camera to adjust
+    time.sleep(10);        # Sleeps for 5 seconds to allow the camera to adjust
    
     if (calibrate == True):     # Creates file name for calibration
         directory = "/home/pi/SeniorDesignProject/";
@@ -32,7 +32,7 @@ def takePicture(numShelf, numPlant, calibrate):
         directory = "/home/pi/SeniorDesignProject/images/";
         name = "shelf " + str(numShelf) + " plant " + str(numPlant) + now.strftime(" %m-%d-%Y %H:%M:%S") + ".jpg";
 
-    title = str(directory+name)     # Combines image name and directory.
+    title = str(directory+name);     # Combines image name and directory.
     camera.capture(title);      # Takes the picture
     camera.stop_preview();      # Closes the camera
 

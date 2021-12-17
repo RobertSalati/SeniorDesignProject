@@ -58,9 +58,9 @@ def selectPlants():
 
     # Initial loop to find what plants will be worked with.
     count = 0;
-
+    print('Input which plants you want \nNumbered 1-18 \nType "all" to run all plants');
     while (True):
-
+        
         plantNum = input("\nPlant number: ");
 
         if (plantNum == "done" or plantNum == "Done"):      # Done inputting values

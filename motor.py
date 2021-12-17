@@ -1,6 +1,6 @@
 import numpy as np;
-from adafruit_motorkit import MotorKit;
-from adafruit_motor import stepper;
+#from adafruit_motorkit import MotorKit;
+#from adafruit_motor import stepper;
 import time as time;
 
 
@@ -10,13 +10,22 @@ r = 0.015;       # spool radius [m];
 stepAngle = 360/200*np.pi/180;   # angle per step [rad];
 
 
-kit1 = MotorKit(address=0x60);
-kit2 = MotorKit(address=0x61);
-motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
+#kit1 = MotorKit(address=0x60);
+#kit2 = MotorKit(address=0x61);
+#motorAddresses = [kit1.stepper1, kit1.stepper2, kit2.stepper1, kit2.stepper2];
 
 
 class Motor:
     def __init__(self,num, xpos, ypos, length):
+        """Motor Constructor.
+        Args:
+            num (int): motor number, used for indexing
+            xpos (float): motor x location
+            ypos (float): motor y location
+            length (float): initial string length
+        Returns: 
+            None
+        """
         self.num = num;
         self.xpos = xpos;
         self.ypos = ypos;
@@ -40,7 +49,6 @@ class Motor:
             dir = stepper.BACKWARD
         for i in range(int(steps)):
             motorAddresses[self.num].onestep(direction=dir);
-            #motorAddresses[self.num].onestep(direction=dir,style = stepper.INTERLEAVE);
             time.sleep(0.05);
     def release(self):
         """Turns off holding torque
@@ -90,14 +98,102 @@ class Motor:
         print("        New length:", self.lengthNew);
         print("        Steps:", self.steps);
 
+def compensate(motors):
+    """Function to compensate any errors the motors may have occured. Simply moves the motors back an equal amount of steps.
+    Args: 
+        motors (Array dtype:object): Array of 4 motor objects.
+    Returns:
+        None.
+    """
+    for motor in motors:
+        motor.move(25, 1);
 
-def controlMotors(plant, motors):
-    """Main function to move the motors. Calculates the lengths and number of steps, and moves all motors simultaneously
+def controlMotors(plant,motors):
+    """Main function to move the motors. Calculates the lengths and number of steps, and moves motors a prescribed number of steps at a time.
     Args:
         plant (object): Plant which the camera needs to move to.
         motors (Array dtype:object): Array of 4 motor objects.
     Returns:
         None.
+    """    
+
+    numSteps = 50;
+    loop = True;
+
+    for motor in motors:        # calculate parameters for movement
+        motor.count = 0;
+        motor.calcLengths(plant.xpos,plant.ypos);
+        motor.calcSteps();
+    
+    motorsSorted = np.empty([4],dtype='object');
+    ind = 0;
+
+    # Sorting motors by direction. Want motors to give slack before they pull or bad things happen
+    for motor in motors:
+        if motor.direction == 1:
+            motorsSorted[ind] = motor;
+            ind += 1;
+
+    for motor in motors:
+        if motor.direction == -1:
+            motorsSorted[ind] = motor;
+            ind += 1;
+
+    for motor in motorsSorted:
+        motor.printMotor();
+
+
+    while loop == True:
+        for motor in motorsSorted:
+            print("num: ", motor.num+1);
+            if np.abs(motor.count) == np.abs(motor.steps):      # If no more steps remaining, don't move
+                print("   No steps remaining")
+                motor.release();
+                # end if
+            elif numSteps < np.abs(motor.steps)-np.abs(motor.count):        # If more than numSteps remaining, step numSteps times.
+
+                motor.move(steps=numSteps, dir=motor.direction);
+                motor.release();
+                motor.count += numSteps;
+
+                print("   Moving", numSteps, "steps");
+                print("  ", np.abs(motor.steps)-np.abs(motor.count), "steps remaining");
+                # end elif
+
+            elif numSteps >= np.abs(motor.steps)-np.abs(motor.count):       # If less than numSteps remaining, do the remaining steps
+                motor.move(steps=np.abs(motor.steps)-np.abs(motor.count), dir=motor.direction);
+                print("   Moving", np.abs(motor.steps)-np.abs(motor.count), "steps");
+                motor.release();
+                motor.count += np.abs(motor.steps)-np.abs(motor.count);
+                # end elif
+
+            time.sleep(0.01);
+
+        loop = False;
+        for motor in motors:
+            if np.abs(motor.count) < np.abs(motor.steps):
+                loop = True;
+                break;
+                # end if
+            #end for
+
+
+        print("----------------------------------------");
+        time.sleep(1);
+        # end while
+    compensate(motors);
+
+def controlMotorsOld(plant, motors):
+    """Main function to move the motors. Calculates the lengths and number of steps, and moves all motors simultaneously
+    
+    Args:
+        plant (object): Plant which the camera needs to move to.
+        motors (Array dtype:object): Array of 4 motor objects.
+    Returns:
+        None.
+    =======================================================================================
+                                        NO LONGER IN USE
+    =======================================================================================
     """
     for motor in motors:
         motor.count = 0;
@@ -116,108 +212,3 @@ def controlMotors(plant, motors):
             motor.count += np.abs(motor.steps);
             if (motor.count % np.abs(maxSteps) < np.abs(motor.steps)):
                 motor.move(steps=1,dir=motor.direction);
-
-def controlMotorsTest1(plant,motors):
-    """Main function to move the motors. Calculates the lengths and number of steps, and moves motors a prescribed number of steps at a time.
-    Args:
-        plant (object): Plant which the camera needs to move to.
-        motors (Array dtype:object): Array of 4 motor objects.
-    Returns:
-        None.
-    """    
-
-    numSteps = 100;
-    loop = True;
-
-    for motor in motors:        # calculate parameters for movement
-        motor.count = 0;
-        motor.calcLengths(plant.xpos,plant.ypos);
-        motor.calcSteps();
-    
-    motorsSorted = np.empty([4],dtype='object');
-    ind = 0;
-    for motor in motors:
-        if motor.direction == 1:
-            motorsSorted[ind] = motor;
-            ind += 1;
-
-    for motor in motors:
-        if motor.direction == -1:
-            motorsSorted[ind] = motor;
-            ind += 1;
-
-    for motor in motorsSorted:
-        motor.printMotor();
-
-
-    while loop == True:
-        for motor in motorsSorted:
-            print("num: ", motor.num+1);
-            if np.abs(motor.count) == np.abs(motor.steps):
-                print("   No steps remaining")
-                motor.release();
-
-            elif numSteps < np.abs(motor.steps)-np.abs(motor.count):
-
-                motor.move(steps=numSteps, dir=motor.direction);
-                motor.release();
-                motor.count += numSteps;
-                print("   Moving", numSteps, "steps");
-                print("  ", np.abs(motor.steps)-np.abs(motor.count), "steps remaining");
-
-            elif numSteps >= np.abs(motor.steps)-np.abs(motor.count):
-                motor.move(steps=np.abs(motor.steps)-np.abs(motor.count), dir=motor.direction);
-                print("   Moving", np.abs(motor.steps)-np.abs(motor.count), "steps");
-                motor.release();
-                motor.count += np.abs(motor.steps)-np.abs(motor.count);
-                
-
-            time.sleep(0.01);
-
-        loop = False;
-        for motor in motors:
-            if np.abs(motor.count) < np.abs(motor.steps):
-                loop = True;
-                break;
-
-        print("----------------------------------------");
-        time.sleep(1);
-
-def controlMotorsTest2(plant,motors):
-    """Main function to move the motors. Calculates the lengths and number of steps, and moves motors all their steps separately
-    Args:
-        plant (object): Plant which the camera needs to move to.
-        motors (Array dtype:object): Array of 4 motor objects.
-    Returns:
-        None.
-    """
-
-    for motor in motors:        # calculate parameters for movement
-        motor.count = 0;
-        motor.calcLengths(plant.xpos,plant.ypos);
-        motor.calcSteps();
-        motor.printMotor();
-    print("----------------------------");
-    
-    motorsSorted = np.empty([4],dtype='object');
-    ind = 0;
-    for motor in motors:
-        if motor.direction == 1:
-            motorsSorted[ind] = motor;
-            ind += 1;
-
-    for motor in motors:
-        if motor.direction == -1:
-            motorsSorted[ind] = motor;
-            ind += 1;
-
-    for motor in motorsSorted:
-        motor.printMotor();
-        motor.move(motor.steps, motor.direction);
-
-        time.sleep(1);
-
-def compensate(motors):
-    for motor in motors:
-        motor.move(50,-1);
-
