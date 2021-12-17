@@ -28,9 +28,9 @@ class Plant:
 
         self.xpos = float(input("New X Position: "));
         self.ypos = float(input("New Y Positiin: "));
-        #data = np.genfromtxt("hold.txt",skip_header=2,dtype=str, delimiter=",");
+        
         data[self.num, 1] = self.xpos; data[self.num, 2] = self.ypos;
-        np.savetxt("testLocs.txt", data.astype('str'), fmt='%s', delimiter = ', ',header = "Plant #		X	Y \n-------------------------");
+        np.savetxt("plantLocs.txt", data.astype('str'), fmt='%s', delimiter = ', ',header = "Plant #		X	Y \n-------------------------");
 
 
     def printPlant(self):
@@ -51,6 +51,7 @@ def selectPlants():
     """
     data = np.genfromtxt("plantLocs.txt", skip_header=2);        # Read plant locations from text file
     locs = data[:,2:4].astype('float');
+    # For small scale testing:
     #locs = np.array([[l/2,w/2],[l/2,0],[l/2,-w/2],[0,-w/2],[0,0],[0,w/2],[-l/2, w/2],[-l/2,0],[-l/2,-w/2]]);
     
     plants = np.empty(len(locs),dtype=object);         # Create empty array for plant objects (maybe replace).
