@@ -5,7 +5,7 @@ from datetime import datetime;
 #import cv2 as cv;
 import matplotlib.pyplot as plt;
 from motor import *;
-# test
+# test gg
 # Global variables
 camera = PiCamera();
 
